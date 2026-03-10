@@ -1,5 +1,4 @@
 terraform {
-  required_version = ">= 1.14.0"
 
   required_providers {
     libvirt = {
@@ -7,8 +6,4 @@ terraform {
       version = "~> 0.9"
     }
   }
-}
-
-provider "libvirt" {
-  uri = var.libvirt_uri
 }
