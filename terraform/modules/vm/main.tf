@@ -1,17 +1,15 @@
-data "libvirt_volume" "vm_template" {
-
-  name = var.template_volume_name
-  pool = var.template_pool
-
-}
-
 resource "libvirt_volume" "vm_disk" {
 
   name = "${var.name}.qcow2"
   pool = var.volume_pool
 
-  base_volume_id = data.libvirt_volume.vm_template.id
-  format         = "qcow2"
+  format = "qcow2"
+
+  create = {
+    content = {
+      url = var.base_image_path
+    }
+  }
 
 }
 
@@ -37,24 +35,51 @@ resource "libvirt_domain" "vm" {
 
   name   = var.name
   memory = var.memory_mib
+  memory_unit = "MiB"
   vcpu   = var.vcpu
 
   type = "kvm"
 
-  disk {
-    volume_id = libvirt_volume.vm_disk.id
+  os = {
+    type = "hvm"
   }
 
-  network_interface {
-    network_name = var.network_name
+  devices = {
+    disks = [
+      {
+        source = {
+          volume = {
+            pool   = libvirt_volume.vm_disk.pool
+            volume = libvirt_volume.vm_disk.name
+          }
+        }
+        target = {
+          dev = "vda"
+          bus = "virtio"
+        }
+      },
+      {
+        device = "cdrom"
+        source = {
+          file = libvirt_cloudinit_disk.cloudinit.path
+        }
+        target = {
+          dev = "sda"
+          bus = "sata"
+        }
+      }
+    ]
+
+    interfaces = [
+      {
+        type = "network"
+        source = {
+          network = {
+            network = var.network_name
+          }
+        }
+        model = "virtio"
+      }
+    ]
   }
-
-  cloudinit = libvirt_cloudinit_disk.cloudinit.id
-
-  console {
-    type        = "pty"
-    target_port = "0"
-    target_type = "serial"
-  }
-
 }
