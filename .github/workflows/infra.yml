@@ -1,4 +1,4 @@
-name: Terraform CI/CD
+name: Terraform
 
 on:
   pull_request:
@@ -22,13 +22,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend=false
-      - run: terraform validate || true
+
+      - name: Terraform Init (no backend)
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
 
 
   plan:
     name: Terraform Plan
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: validate
     if: github.event_name == 'pull_request'
 
@@ -39,8 +43,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend=false
-      - run: terraform plan -no-color
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -no-color
 
 
   apply:
@@ -56,5 +64,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init
-      - run: terraform apply -auto-approve
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
