@@ -22,10 +22,16 @@ variable "volume_pool" {
   default     = "vm-disks"
 }
 
-variable "base_image_path" {
-  description = "Absolute path to the cloud image template on the hypervisor"
+variable "template_pool" {
+  description = "Libvirt storage pool containing the base VM template image"
   type        = string
-  default     = "/storage/templates/debian-12-cloud.qcow2"
+  default     = "templates"
+}
+
+variable "template_volume_name" {
+  description = "Name of the base VM template volume in libvirt"
+  type        = string
+  default     = "debian-12-cloud.qcow2"
 }
 
 variable "vm_memory_mib" {

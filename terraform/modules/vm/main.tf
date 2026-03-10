@@ -1,16 +1,23 @@
+data "libvirt_volume" "vm_template" {
+
+  name = var.template_volume_name
+  pool = var.template_pool
+
+}
+
 resource "libvirt_volume" "vm_disk" {
 
   name = "${var.name}.qcow2"
   pool = var.volume_pool
 
-  source = var.base_image_path
+  base_volume_id = data.libvirt_volume.vm_template.id
+  format         = "qcow2"
 
 }
 
 resource "libvirt_cloudinit_disk" "cloudinit" {
 
   name = "${var.name}-cloudinit.iso"
-  pool = var.volume_pool
 
   user_data = templatefile("${path.module}/../../cloud-init/node.yaml.tpl", {
     hostname = var.name

@@ -32,7 +32,11 @@ variable "volume_pool" {
   type = string
 }
 
-variable "base_image_path" {
+variable "template_pool" {
+  type = string
+}
+
+variable "template_volume_name" {
   type = string
 }
 

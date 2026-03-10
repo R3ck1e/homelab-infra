@@ -33,10 +33,11 @@ module "vm" {
 
   ssh_key = file(pathexpand(var.ssh_public_key))
 
-  network_name    = var.network_name
-  volume_pool     = var.volume_pool
-  base_image_path = var.base_image_path
-  memory_mib      = var.vm_memory_mib
-  vcpu            = var.vm_vcpu
+  network_name         = var.network_name
+  volume_pool          = var.volume_pool
+  template_pool        = var.template_pool
+  template_volume_name = var.template_volume_name
+  memory_mib           = var.vm_memory_mib
+  vcpu                 = var.vm_vcpu
 
 }
