@@ -41,6 +41,11 @@ jobs:
         working-directory: terraform
 
     steps:
+      - name: Prepare Terraform workspace
+        run: |
+          sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
+          rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
+          rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
@@ -62,6 +67,11 @@ jobs:
         working-directory: terraform
 
     steps:
+      - name: Prepare Terraform workspace
+        run: |
+          sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
+          rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
+          rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
