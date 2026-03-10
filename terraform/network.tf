@@ -29,6 +29,8 @@ resource "libvirt_network" "homelab" {
           }
         ]
       }
+
     }
   ]
+
 }

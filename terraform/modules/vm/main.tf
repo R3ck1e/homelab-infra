@@ -1,50 +1,53 @@
-data "libvirt_volume" "debian_template" {
+resource "libvirt_volume" "vm_disk" {
 
-  name = "debian-12-cloud.qcow2"
-  pool = "templates"
+  name = "${var.name}.qcow2"
+  pool = var.volume_pool
 
-}
-
-resource "libvirt_volume" "disk" {
-
-  name           = "${var.name}.qcow2"
-  base_volume_id = data.libvirt_volume.debian_template.id
-
-  pool   = "vm-disks"
-  format = "qcow2"
+  source = var.base_image_path
 
 }
 
 resource "libvirt_cloudinit_disk" "cloudinit" {
 
   name = "${var.name}-cloudinit.iso"
-  pool = "vm-disks"
+  pool = var.volume_pool
 
-  user_data = templatefile(
-    "${path.module}/../../cloud-init/node.yaml.tpl",
-    {
-      hostname = var.name
-      ip       = var.ip
-      ssh_key  = var.ssh_key
-    }
-  )
+  user_data = templatefile("${path.module}/../../cloud-init/node.yaml.tpl", {
+    hostname = var.name
+    ip       = var.ip
+    role     = var.role
+    ssh_key  = var.ssh_key
+  })
+
+  meta_data = <<EOF
+instance-id: ${var.name}
+local-hostname: ${var.name}
+EOF
 
 }
 
 resource "libvirt_domain" "vm" {
 
   name   = var.name
-  memory = 4096
-  vcpu   = 2
+  memory = var.memory_mib
+  vcpu   = var.vcpu
 
-  network_interface {
-    network_name = "homelab-net"
-  }
+  type = "kvm"
 
   disk {
-    volume_id = libvirt_volume.disk.id
+    volume_id = libvirt_volume.vm_disk.id
+  }
+
+  network_interface {
+    network_name = var.network_name
   }
 
   cloudinit = libvirt_cloudinit_disk.cloudinit.id
+
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
 
 }
