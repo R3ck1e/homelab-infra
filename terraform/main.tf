@@ -1,3 +1,5 @@
+<<<<<<< ours
+<<<<<<< ours
 locals {
 
   resolved_ssh_key = fileexists(pathexpand(var.ssh_public_key_path)) ? trimspace(file(pathexpand(var.ssh_public_key_path))) : trimspace(var.ssh_public_key)
@@ -42,3 +44,13 @@ module "vm" {
   vcpu            = var.vm_vcpu
 
 }
+=======
+terraform {
+  required_version = ">= 1.0"
+}
+>>>>>>> theirs
+=======
+terraform {
+  required_version = ">= 1.0"
+}
+>>>>>>> theirs

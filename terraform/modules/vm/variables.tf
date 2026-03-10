@@ -1,3 +1,5 @@
+<<<<<<< ours
+<<<<<<< ours
 variable "name" {
   type = string
 }
@@ -43,3 +45,7 @@ variable "memory_mib" {
 variable "vcpu" {
   type = number
 }
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs

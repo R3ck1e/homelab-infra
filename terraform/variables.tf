@@ -1,3 +1,5 @@
+<<<<<<< ours
+<<<<<<< ours
 variable "ssh_public_key" {
   description = "SSH public key content used for VM access. Preferred for CI and remote runners."
   type        = string
@@ -55,3 +57,7 @@ variable "vm_vcpu" {
     error_message = "vm_vcpu must be at least 1."
   }
 }
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs

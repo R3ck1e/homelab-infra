@@ -1,3 +1,5 @@
+<<<<<<< ours
+<<<<<<< ours
 resource "libvirt_volume" "vm_disk" {
 
   name = "${var.name}.qcow2"
@@ -85,3 +87,7 @@ resource "libvirt_domain" "vm" {
     ]
   }
 }
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
