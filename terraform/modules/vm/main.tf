@@ -1,80 +1,58 @@
 resource "libvirt_volume" "vm_disk" {
+
   name = "${var.name}.qcow2"
-  pool = var.volume_pool
+  pool = "vm-disks"
 
-  capacity = var.vm_disk_capacity_bytes
+  source = "/storage/templates/debian-12-cloud.qcow2"
 
-  backing_store = {
-    path = var.template_volume_path
+  lifecycle {
+    prevent_destroy = true
   }
+
 }
 
 resource "libvirt_cloudinit_disk" "cloudinit" {
+
   name = "${var.name}-cloudinit.iso"
 
-  user_data = templatefile("${path.module}/../../cloud-init/node.yaml.tpl", {
-    hostname = var.name
-    ip       = var.ip
-    role     = var.role
-    ssh_key  = var.ssh_key
-  })
+  user_data = templatefile(
+    "${path.module}/../../cloud-init/node.yaml.tpl",
+    {
+      hostname = var.name
+      ip       = var.ip
+      ssh_key  = var.ssh_key
+    }
+  )
 
   meta_data = <<EOF
 instance-id: ${var.name}
 local-hostname: ${var.name}
 EOF
+
 }
 
 resource "libvirt_domain" "vm" {
-  name        = var.name
-  memory      = var.memory_mib
-  memory_unit = "MiB"
-  vcpu        = var.vcpu
-  type        = "kvm"
 
-  os = {
-    type = "hvm"
+  name   = var.name
+  memory = 2048
+  vcpu   = 2
+
+  type = "kvm"
+
+  disk {
+    volume_id = libvirt_volume.vm_disk.id
   }
 
-  devices = {
-    disks = [
-      {
-        source = {
-          volume = {
-            pool   = libvirt_volume.vm_disk.pool
-            volume = libvirt_volume.vm_disk.name
-          }
-        }
-        target = {
-          dev = "vda"
-          bus = "virtio"
-        }
-      },
-      {
-        device = "cdrom"
-        source = {
-          file = {
-            file = libvirt_cloudinit_disk.cloudinit.path
-          }
-        }
-        target = {
-          dev = "sda"
-          bus = "sata"
-        }
-      }
-    ]
-
-    interfaces = [
-      {
-        source = {
-          network = {
-            network = var.network_name
-          }
-        }
-        model = {
-          type = "virtio"
-        }
-      }
-    ]
+  network_interface {
+    network_name = "homelab-net"
   }
+
+  cloudinit = libvirt_cloudinit_disk.cloudinit.id
+
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
 }
