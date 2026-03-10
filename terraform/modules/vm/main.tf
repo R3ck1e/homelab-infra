@@ -59,7 +59,9 @@ resource "libvirt_domain" "vm" {
       {
         device = "cdrom"
         source = {
-          file = libvirt_cloudinit_disk.cloudinit.path
+          file = {
+            file = libvirt_cloudinit_disk.cloudinit.path
+          }
         }
         target = {
           dev = "sda"
