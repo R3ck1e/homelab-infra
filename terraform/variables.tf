@@ -1,7 +1,13 @@
 variable "ssh_public_key" {
-  description = "Path to SSH public key"
+  description = "SSH public key content used for VM access. Preferred for CI and remote runners."
   type        = string
-  default     = "~/.ssh/id_ed25519.pub"
+  default     = ""
+}
+
+variable "ssh_public_key_path" {
+  description = "Path to SSH public key for local runs when ssh_public_key is not provided"
+  type        = string
+  default     = "/home/github-runner/.ssh/id_ed25519.pub"
 }
 
 variable "libvirt_uri" {

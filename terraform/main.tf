@@ -1,5 +1,7 @@
 locals {
 
+  resolved_ssh_key = fileexists(pathexpand(var.ssh_public_key_path)) ? trimspace(file(pathexpand(var.ssh_public_key_path))) : trimspace(var.ssh_public_key)
+
   nodes = {
 
     control-1 = {
@@ -31,7 +33,7 @@ module "vm" {
   ip   = each.value.ip
   role = each.value.role
 
-  ssh_key = file(pathexpand(var.ssh_public_key))
+  ssh_key = local.resolved_ssh_key
 
   network_name    = var.network_name
   volume_pool     = var.volume_pool
