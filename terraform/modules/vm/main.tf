@@ -76,7 +76,9 @@ resource "libvirt_domain" "vm" {
             network = var.network_name
           }
         }
-        model = "virtio"
+        model = {
+          type = "virtio"
+        }
       }
     ]
   }
