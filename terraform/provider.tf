@@ -10,5 +10,5 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://terraform@100.110.30.13/system"
+  uri = "qemu+ssh://terraform@100.110.30.13/system?keyfile=/home/github-runner/.ssh/github_vds"
 }
