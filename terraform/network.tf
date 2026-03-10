@@ -2,28 +2,32 @@ resource "libvirt_network" "homelab" {
   name      = "homelab-net"
   autostart = true
 
-  bridge {
+  bridge = {
     name = "virbr-homelab"
     stp  = "on"
   }
 
-  domain {
+  domain = {
     name = "homelab.local"
   }
 
-  forward {
+  forward = {
     mode = "nat"
   }
 
-  ips {
-    address = "10.10.0.1"
-    netmask = "255.255.255.0"
+  ips = [
+    {
+      address = "10.10.0.1"
+      netmask = "255.255.255.0"
 
-    dhcp {
-      ranges {
-        start = "10.10.0.100"
-        end   = "10.10.0.200"
+      dhcp = {
+        ranges = [
+          {
+            start = "10.10.0.100"
+            end   = "10.10.0.200"
+          }
+        ]
       }
     }
-  }
+  ]
 }
