@@ -3,8 +3,6 @@ resource "libvirt_volume" "vm_disk" {
   name = "${var.name}.qcow2"
   pool = var.volume_pool
 
-  format = "qcow2"
-
   create = {
     content = {
       url = var.base_image_path
