@@ -52,6 +52,19 @@ jobs:
       - name: Terraform Init
         run: terraform init -reconfigure
 
+      - name: Ensure VM SSH public key
+        run: |
+          if [ ! -f /home/github-runner/.ssh/vm_admin.pub ]; then
+            ssh-keygen -y -f /home/github-runner/.ssh/github_vds > /home/github-runner/.ssh/vm_admin.pub
+            chmod 644 /home/github-runner/.ssh/vm_admin.pub
+          fi
+
+      - name: Import existing network
+        run: |
+          if ! terraform state list | grep -qx 'libvirt_network.homelab'; then
+            terraform import libvirt_network.homelab homelab-net
+          fi
+
       - name: Terraform Plan
         run: terraform plan -no-color
 
@@ -77,6 +90,19 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -reconfigure
+
+      - name: Ensure VM SSH public key
+        run: |
+          if [ ! -f /home/github-runner/.ssh/vm_admin.pub ]; then
+            ssh-keygen -y -f /home/github-runner/.ssh/github_vds > /home/github-runner/.ssh/vm_admin.pub
+            chmod 644 /home/github-runner/.ssh/vm_admin.pub
+          fi
+
+      - name: Import existing network
+        run: |
+          if ! terraform state list | grep -qx 'libvirt_network.homelab'; then
+            terraform import libvirt_network.homelab homelab-net
+          fi
 
       - name: Terraform Apply
         run: terraform apply -auto-approve

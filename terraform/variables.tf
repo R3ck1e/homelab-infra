@@ -1,15 +1,13 @@
-<<<<<<< ours
-<<<<<<< ours
 variable "ssh_public_key" {
-  description = "SSH public key content used for VM access. Preferred for CI and remote runners."
+  description = "SSH public key content for the admin user inside VMs"
   type        = string
   default     = ""
 }
 
 variable "ssh_public_key_path" {
-  description = "Path to SSH public key for local runs when ssh_public_key is not provided"
+  description = "Path to SSH public key for VM access on the runner host"
   type        = string
-  default     = "/home/github-runner/.ssh/id_ed25519.pub"
+  default     = "/home/github-runner/.ssh/vm_admin.pub"
 }
 
 variable "libvirt_uri" {
@@ -25,15 +23,21 @@ variable "network_name" {
 }
 
 variable "volume_pool" {
-  description = "Libvirt storage pool used for VM disks and cloud-init images"
+  description = "Libvirt storage pool used for writable VM disks"
   type        = string
   default     = "vm-disks"
 }
 
-variable "base_image_path" {
-  description = "Absolute path to the base cloud image on the hypervisor"
+variable "template_volume_path" {
+  description = "Absolute path to the base qcow2 image on the libvirt host"
   type        = string
   default     = "/storage/templates/debian-12-cloud.qcow2"
+}
+
+variable "vm_disk_capacity_bytes" {
+  description = "Capacity for VM root disks in bytes"
+  type        = number
+  default     = 21474836480
 }
 
 variable "vm_memory_mib" {
@@ -57,7 +61,3 @@ variable "vm_vcpu" {
     error_message = "vm_vcpu must be at least 1."
   }
 }
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs

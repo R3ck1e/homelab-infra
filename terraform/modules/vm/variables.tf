@@ -1,5 +1,3 @@
-<<<<<<< ours
-<<<<<<< ours
 variable "name" {
   type = string
 }
@@ -34,8 +32,12 @@ variable "volume_pool" {
   type = string
 }
 
-variable "base_image_path" {
+variable "template_volume_path" {
   type = string
+}
+
+variable "vm_disk_capacity_bytes" {
+  type = number
 }
 
 variable "memory_mib" {
@@ -45,7 +47,3 @@ variable "memory_mib" {
 variable "vcpu" {
   type = number
 }
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
