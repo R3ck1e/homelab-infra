@@ -1,8 +1,7 @@
 resource "libvirt_network" "homelab" {
-  name      = "homelab-net"
-  autostart = true
+  name = "homelab-net"
 
-  xml = <<EOF
+  network_xml = <<EOF
 <network>
   <name>homelab-net</name>
   <forward mode='nat'/>
