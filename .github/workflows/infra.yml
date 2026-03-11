@@ -14,8 +14,6 @@ jobs:
   validate:
     name: Terraform Validate
     runs-on: ubuntu-latest
-    env:
-      TF_DATA_DIR: /tmp/homelab-infra-terraform
 
     defaults:
       run:
@@ -37,31 +35,17 @@ jobs:
     runs-on: self-hosted
     needs: validate
     if: github.event_name == 'pull_request'
-    env:
-      TF_DATA_DIR: /home/github-runner/.terraform-data/homelab-infra
 
     defaults:
       run:
         working-directory: terraform
 
     steps:
-      - name: Prepare Terraform workspace
-        run: |
-          sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
-          rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
-          rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
-          mkdir -p "$TF_DATA_DIR"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init -reconfigure
-
-      - name: Import existing network
-        run: |
-          if ! terraform state list | grep -qx 'libvirt_network.homelab'; then
-            terraform import libvirt_network.homelab homelab-net
-          fi
 
       - name: Terraform Plan
         run: terraform plan -no-color
@@ -72,31 +56,17 @@ jobs:
     runs-on: self-hosted
     needs: validate
     if: github.event_name == 'push'
-    env:
-      TF_DATA_DIR: /home/github-runner/.terraform-data/homelab-infra
 
     defaults:
       run:
         working-directory: terraform
 
     steps:
-      - name: Prepare Terraform workspace
-        run: |
-          sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
-          rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
-          rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
-          mkdir -p "$TF_DATA_DIR"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init -reconfigure
-
-      - name: Import existing network
-        run: |
-          if ! terraform state list | grep -qx 'libvirt_network.homelab'; then
-            terraform import libvirt_network.homelab homelab-net
-          fi
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
