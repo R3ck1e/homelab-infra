@@ -14,6 +14,8 @@ jobs:
   validate:
     name: Terraform Validate
     runs-on: ubuntu-latest
+    env:
+      TF_DATA_DIR: /tmp/homelab-infra-terraform
 
     defaults:
       run:
@@ -35,6 +37,8 @@ jobs:
     runs-on: self-hosted
     needs: validate
     if: github.event_name == 'pull_request'
+    env:
+      TF_DATA_DIR: /home/github-runner/.terraform-data/homelab-infra
 
     defaults:
       run:
@@ -46,18 +50,12 @@ jobs:
           sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
           rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
           rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
+          mkdir -p "$TF_DATA_DIR"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init -reconfigure
-
-      - name: Ensure VM SSH public key
-        run: |
-          if [ ! -f /home/github-runner/.ssh/vm_admin.pub ]; then
-            ssh-keygen -y -f /home/github-runner/.ssh/github_vds > /home/github-runner/.ssh/vm_admin.pub
-            chmod 644 /home/github-runner/.ssh/vm_admin.pub
-          fi
 
       - name: Import existing network
         run: |
@@ -74,6 +72,8 @@ jobs:
     runs-on: self-hosted
     needs: validate
     if: github.event_name == 'push'
+    env:
+      TF_DATA_DIR: /home/github-runner/.terraform-data/homelab-infra
 
     defaults:
       run:
@@ -85,18 +85,12 @@ jobs:
           sudo chown -R "$(id -un):$(id -gn)" "$GITHUB_WORKSPACE"
           rm -f "$GITHUB_WORKSPACE/terraform/terraform.tfstate"
           rm -f "$GITHUB_WORKSPACE/terraform/.terraform/terraform.tfstate"
+          mkdir -p "$TF_DATA_DIR"
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init -reconfigure
-
-      - name: Ensure VM SSH public key
-        run: |
-          if [ ! -f /home/github-runner/.ssh/vm_admin.pub ]; then
-            ssh-keygen -y -f /home/github-runner/.ssh/github_vds > /home/github-runner/.ssh/vm_admin.pub
-            chmod 644 /home/github-runner/.ssh/vm_admin.pub
-          fi
 
       - name: Import existing network
         run: |
